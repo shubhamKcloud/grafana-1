@@ -121,7 +121,7 @@ echo "create lightsail instance..."
 #AWS_SECRET_ACCESS_KEY=$(aws secretsmanager get-secret-value --secret-id /credentials/grafana-user/secret-key --output text --query SecretString)
 sed -i "s#<AWS_ACCESS_KEY/>#${AWS_ACCESS_KEY}#g" lightsail.sh
 sed -i "s#<AWS_SECRET_KEY/>#${AWS_SECRET_KEY}#g" lightsail.sh
-cat instance.sh
+cat lightsail.sh
 #TODO: Check If instance already exit
 aws lightsail create-instances --instance-names grafana-${PREFIX} --availability-zone eu-central-1a --blueprint-id ubuntu_22_04 --bundle-id nano_2_0 --user-data file://lightsail.sh
 aws lightsail allocate-static-ip --static-ip-name grafana-${PREFIX}
