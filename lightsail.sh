@@ -7,6 +7,7 @@ curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip
 apt install unzip -y
 unzip awscliv2.zip
 ./aws/install
+sleep 120
 rm -rf awscliv2.zip
 
 # export AWS_ACCESS_KEY_ID=<AWS_ACCESS_KEY/>
