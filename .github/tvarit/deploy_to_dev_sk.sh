@@ -78,36 +78,36 @@ echo $AWS_SECRET_KEY
 #   --public-domain-names ${PREFIX}-tvarit-com=next-${PREFIX}.tvarit.com && sleep 10) || :
 
 echo "Building docker image..."
-docker build --tag grafana/grafana:next-${PREFIX} .
+# docker build --tag grafana/grafana:next-${PREFIX} .
 
-cd .github/tvarit/conf/prod/
-echo "Downloading plugins..."
-rm -rf plugins
-aws s3 sync s3://com.tvarit.grafana.artifacts/grafana-plugins plugins
-find plugins/ -type f -name *.tar.gz -exec bash -c 'cd $(dirname $1) && tar -xf $(basename $1) && rm $(basename $1); cd -' bash {} \;
+# cd .github/tvarit/conf/prod/
+# echo "Downloading plugins..."
+# rm -rf plugins
+# aws s3 sync s3://com.tvarit.grafana.artifacts/grafana-plugins plugins
+# find plugins/ -type f -name *.tar.gz -exec bash -c 'cd $(dirname $1) && tar -xf $(basename $1) && rm $(basename $1); cd -' bash {} \;
 
-echo "Finalising docker image..."
-cp grafana.ini.template grafana.ini
-sed -i "s#<DOMAIN/>#next-${PREFIX}.tvarit.com#g" grafana.ini
-sed -i "s#<ROOT_URL/>#https://next-${PREFIX}.tvarit.com/#g" grafana.ini
-sed -i "s#<SIGNING_SECRET/>#${SIGNING_SECRET}#g" grafana.ini
-sed -i "s#<DB_ENDPOINT/>#${DB_ENDPOINT}#g" grafana.ini
-sed -i "s#<DB_PASSWORD/>#$(echo ${DB_PASSWORD} | sed 's/#/\\#/g' | sed 's/&/\\&/g')#g" grafana.ini
-sed -i "s#<OAUTH_CLIENT_ID/>#${OAUTH_CLIENT_ID}#g" grafana.ini
-sed -i "s#<OAUTH_CLIENT_SECRET/>#${OAUTH_CLIENT_SECRET}#g" grafana.ini
-sed -i "s#<SMTP_HOST/>#${SMTP_HOST}#g" grafana.ini
-sed -i "s#<SMTP_USER/>#${SMTP_USER}#g" grafana.ini
-sed -i "s#<SMTP_PASSWORD/>#${SMTP_PASSWORD}#g" grafana.ini
-sed -i "s#<SMTP_FROM/>#[BETA] Tvarit AI Platform#g" grafana.ini
+# echo "Finalising docker image..."
+# cp grafana.ini.template grafana.ini
+# sed -i "s#<DOMAIN/>#next-${PREFIX}.tvarit.com#g" grafana.ini
+# sed -i "s#<ROOT_URL/>#https://next-${PREFIX}.tvarit.com/#g" grafana.ini
+# sed -i "s#<SIGNING_SECRET/>#${SIGNING_SECRET}#g" grafana.ini
+# sed -i "s#<DB_ENDPOINT/>#${DB_ENDPOINT}#g" grafana.ini
+# sed -i "s#<DB_PASSWORD/>#$(echo ${DB_PASSWORD} | sed 's/#/\\#/g' | sed 's/&/\\&/g')#g" grafana.ini
+# sed -i "s#<OAUTH_CLIENT_ID/>#${OAUTH_CLIENT_ID}#g" grafana.ini
+# sed -i "s#<OAUTH_CLIENT_SECRET/>#${OAUTH_CLIENT_SECRET}#g" grafana.ini
+# sed -i "s#<SMTP_HOST/>#${SMTP_HOST}#g" grafana.ini
+# sed -i "s#<SMTP_USER/>#${SMTP_USER}#g" grafana.ini
+# sed -i "s#<SMTP_PASSWORD/>#${SMTP_PASSWORD}#g" grafana.ini
+# sed -i "s#<SMTP_FROM/>#[BETA] Tvarit AI Platform#g" grafana.ini
 
-cp cloudwatch.json.template cloudwatch.json
-sed -i "s#<DOMAIN/>#next-${PREFIX}.tvarit.com#g" cloudwatch.json
+# cp cloudwatch.json.template cloudwatch.json
+# sed -i "s#<DOMAIN/>#next-${PREFIX}.tvarit.com#g" cloudwatch.json
 
-cp Dockerfile.template Dockerfile
-sed -i "s#<BASE_IMAGE/>#grafana/grafana:next-${PREFIX}#g" Dockerfile
-sed -i "s#<AWS_ACCESS_KEY/>#${AWS_ACCESS_KEY}#g" Dockerfile
-sed -i "s#<AWS_SECRET_KEY/>#${AWS_SECRET_KEY}#g" Dockerfile
-sed -i "s#<AWS_REGION/>#${AWS_DEFAULT_REGION}#g" Dockerfile
+# cp Dockerfile.template Dockerfile
+# sed -i "s#<BASE_IMAGE/>#grafana/grafana:next-${PREFIX}#g" Dockerfile
+# sed -i "s#<AWS_ACCESS_KEY/>#${AWS_ACCESS_KEY}#g" Dockerfile
+# sed -i "s#<AWS_SECRET_KEY/>#${AWS_SECRET_KEY}#g" Dockerfile
+# sed -i "s#<AWS_REGION/>#${AWS_DEFAULT_REGION}#g" Dockerfile
 docker build --tag grafana/grafana:next-${PREFIX} .
 
 
