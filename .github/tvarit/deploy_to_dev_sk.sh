@@ -64,6 +64,9 @@ SIGNING_SECRET=$(aws secretsmanager get-secret-value --secret-id grafana-signing
 #AWS-030
 AWS_ACCESS_KEY=$(aws secretsmanager get-secret-value --secret-id /credentials/grafana-user/access-key --output text --query SecretString)
 AWS_SECRET_KEY=$(aws secretsmanager get-secret-value --secret-id /credentials/grafana-user/secret-key --output text --query SecretString)
+echo $DB_ENDPOINT
+echo $AWS_ACCESS_KEY
+echo $AWS_SECRET_KEY
 
 # echo "Create Lightsail container service if not exists..."
 # (aws lightsail create-container-service \
