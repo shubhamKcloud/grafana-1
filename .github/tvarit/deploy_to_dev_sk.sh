@@ -124,7 +124,7 @@ sed -i "s#<AWS_SECRET_KEY/>#${AWS_SECRET_KEY}#g" lightsail.sh
 cat lightsail.sh
 #TODO: Check If instance already exit
 aws lightsail create-instances --instance-names grafana-${PREFIX} --availability-zone eu-central-1a --blueprint-id ubuntu_22_04 --bundle-id nano_2_0 --user-data file://lightsail.sh
-aws lightsail allocate-static-ip --static-ip-name grafana-${PREFIX}
-aws lightsail attach-static-ip  --static-ip-name grafana-${PREFIX} --instance-name grafana-${PREFIX}
+aws lightsail allocate-static-ip --static-ip-name grafana-ip-${PREFIX}
+aws lightsail attach-static-ip  --static-ip-name grafana-ip-${PREFIX} --instance-name grafana-${PREFIX}
 aws lightsail open-instance-public-ports --port-info fromPort=3000,toPort=3000,protocol=TCP --instance-name grafana-${PREFIX}
 
