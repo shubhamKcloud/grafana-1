@@ -149,7 +149,7 @@ if [ $return_value_instance -eq 0 ]; then
     exit    
 else
     echo "lightsail instance does not exist. Creating instance!!!!!!"
-    cp lighsail.sh userdata.sh
+    cp lightsail.sh userdata.sh
     AWS_ACCESS_KEY_ID=$(aws secretsmanager get-secret-value --secret-id /credentials/grafana-user/access-key --output text --query SecretString)
     AWS_SECRET_ACCESS_KEY=$(aws secretsmanager get-secret-value --secret-id /credentials/grafana-user/secret-key --output text --query SecretString)
     sed -i "s#<AWS_ACCESS_KEY/>#${AWS_ACCESS_KEY}#g" userdata.sh
