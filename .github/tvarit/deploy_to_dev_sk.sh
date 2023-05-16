@@ -84,12 +84,9 @@ DB_ENDPOINT=$(aws lightsail get-relational-database --relational-database-name $
 DB_PASSWORD=$(aws lightsail get-relational-database-master-user-password --relational-database-name ${PREFIX}-next-grafana-db --output text --query masterUserPassword)
 #SIGNING_SECRET=$(aws secretsmanager get-secret-value --secret-id grafana-signing-secret --output text --query SecretString)
 #AWS-030
-echo "Testing!!!!!!!!!!!!!!!!!!!!!!!!"
+
 AWS_ACCESS_KEY=$(aws secretsmanager get-secret-value --secret-id /credentials/grafana-user/access-key --output text --query SecretString)
 AWS_SECRET_KEY=$(aws secretsmanager get-secret-value --secret-id /credentials/grafana-user/secret-key --output text --query SecretString)
-echo $DB_ENDPOINT
-echo $AWS_ACCESS_KEY
-echo $AWS_SECRET_KEY
 
 # echo "Create Lightsail container service if not exists..."
 # (aws lightsail create-container-service \
@@ -152,23 +149,23 @@ if [ $return_value_instance -eq 0 ]; then
     exit    
 else
     echo "lightsail instance does not exist. Creating instance!!!!!!"
-    #AWS_ACCESS_KEY_ID=$(aws secretsmanager get-secret-value --secret-id /credentials/grafana-user/access-key --output text --query SecretString)
-    #AWS_SECRET_ACCESS_KEY=$(aws secretsmanager get-secret-value --secret-id /credentials/grafana-user/secret-key --output text --query SecretString)
-    # sed -i "s#<AWS_ACCESS_KEY/>#${AWS_ACCESS_KEY}#g" lightsail.sh
-    # sed -i "s#<AWS_SECRET_KEY/>#${AWS_SECRET_KEY}#g" lightsail.sh
-    #cat lightsail.sh
-    aws lightsail create-instances --instance-names grafana-${PREFIX} --availability-zone eu-central-1a --blueprint-id ubuntu_22_04 --bundle-id nano_2_0 --user-data file://lightsail.sh
+    cp lighsail.sh userdata.sh
+    AWS_ACCESS_KEY_ID=$(aws secretsmanager get-secret-value --secret-id /credentials/grafana-user/access-key --output text --query SecretString)
+    AWS_SECRET_ACCESS_KEY=$(aws secretsmanager get-secret-value --secret-id /credentials/grafana-user/secret-key --output text --query SecretString)
+    sed -i "s#<AWS_ACCESS_KEY/>#${AWS_ACCESS_KEY}#g" userdata.sh
+    sed -i "s#<AWS_SECRET_KEY/>#${AWS_SECRET_KEY}#g" userdata.sh
+    cat userdata.sh
+    aws lightsail create-instances --instance-names grafana-${PREFIX} --availability-zone eu-central-1a --blueprint-id ubuntu_22_04 --bundle-id nano_2_0 --user-data file://userdata.sh
   
     #check if static IP with same name already exist
     return_value=$(validate_lightsail_instance "$name")
-    #echo " value : $return_value"
     if [[ $return_value -eq 0 ]]; then
       echo "static IP with name $static_ip_name already exist"
     else
       echo "IP name does not exist. Creating it for your instance!!!!!"
       aws lightsail allocate-static-ip --static-ip-name grafana-ip-${PREFIX}
       echo "waiting for server to up and running!!!!!!!!!!!"
-      sleep 300
+      sleep 180
       aws lightsail attach-static-ip  --static-ip-name grafana-ip-${PREFIX} --instance-name grafana-${PREFIX}
       aws lightsail open-instance-public-ports --port-info fromPort=3000,toPort=3000,protocol=TCP --instance-name grafana-${PREFIX}
     fi
