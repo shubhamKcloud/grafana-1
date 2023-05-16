@@ -8,36 +8,26 @@ if [ -z "${PREFIX}" ]; then
     exit 1
 fi
 
-check_lightsail_instance() {
+validate_lightsail_instance() {
     instance_name="$1"
 
     # Get the instance information
     instance_info=$(aws lightsail get-instance --instance-name "$instance_name" 2>/dev/null)
 
-    # Check if the instance exists
-    if [[ -n "$instance_info" ]]; then
-        echo "Lightsail instance with same name $instance_name already exists."
-        return 0
-    else
-        echo "Lightsail instance $instance_name does not exist."
-        return 1
-    fi
+    local exit_code=$?
+    echo $exit_code
+
 }
 
-check_lightsail_static_ip_name() {
-    ip_name="$1"
+ccheck_lightsail_static_ip() {
+    static_ip_name="$1"
 
-    # Get the static IPs information
-    static_ips_info=$(aws lightsail get-static-ips --query "staticIps[*].name" --output text)
+    # Get the static IP information
+    static_ip_info=$(aws lightsail get-static-ip --static-ip-name "$static_ip_name" 2>/dev/null)
 
-    # Check if the IP name exists in the list of static IPs
-    if echo "$static_ips_info" | grep -q "$ip_name"; then
-        echo "Lightsail static IP with same name $ip_name already exists."
-        return 0
-    else
-        echo "Lightsail static IP name $ip_name does not exist."
-        return 1
-    fi
+    local exit_code=$?
+    echo $exit_code
+
 }
 
 aws lightsail get-certificates --certificate-name ${PREFIX}-tvarit-com > /dev/null
@@ -151,29 +141,29 @@ docker push 047870419389.dkr.ecr.eu-central-1.amazonaws.com/lightsail:latest
 #Create Lightsail instance
 echo "create lightsail instance..."
 
-# Check if instance and static IP with same name already exist
+# Check if instance with same name already exist
 instance_name=grafana-${PREFIX}
 static_ip_name=grafana-ip-${PREFIX}
 
-check_lightsail_instance "$instance_name"
-instance_exit_code=$?
+return_value_instance=$(validate_lightsail_instance $instance_name)
 
-if [ $instance_exit_code -eq 0 ]; then
-    echo "Lightsail instance with same name $instance_name already exists."
-    
+if [ $return_value_instance -eq 0 ]; then
+    echo "instance already exist"
+    exit    
 else
     echo "lightsail instance does not exist. Creating instance!!!!!!"
     #AWS_ACCESS_KEY_ID=$(aws secretsmanager get-secret-value --secret-id /credentials/grafana-user/access-key --output text --query SecretString)
     #AWS_SECRET_ACCESS_KEY=$(aws secretsmanager get-secret-value --secret-id /credentials/grafana-user/secret-key --output text --query SecretString)
     # sed -i "s#<AWS_ACCESS_KEY/>#${AWS_ACCESS_KEY}#g" lightsail.sh
     # sed -i "s#<AWS_SECRET_KEY/>#${AWS_SECRET_KEY}#g" lightsail.sh
-    cat lightsail.sh
+    #cat lightsail.sh
     aws lightsail create-instances --instance-names grafana-${PREFIX} --availability-zone eu-central-1a --blueprint-id ubuntu_22_04 --bundle-id nano_2_0 --user-data file://lightsail.sh
   
-    check_lightsail_static_ip_name "$static_ip_name"
-    staticip_exit_code=$?
-    if [ $staticip_exit_code -eq 0 ]; then
-      echo "Lightsail static IP with same name $ip_name already exists."
+    #check if static IP with same name already exist
+    return_value=$(check_lightsail_static_ip "$name")
+    #echo " value : $return_value"
+    if [[ $return_value -eq 0 ]]; then
+      echo "static IP with name $static_ip_name already exist"
     else
       echo "IP name does not exist. Creating it for your instance!!!!!"
       aws lightsail allocate-static-ip --static-ip-name grafana-ip-${PREFIX}
