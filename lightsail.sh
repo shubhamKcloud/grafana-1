@@ -15,8 +15,10 @@ rm -rf awscliv2.zip
 # export AWS_ACCESS_KEY_ID=AKIAQWJKMUG6VSEUIM54
 # export AWS_SECRET_ACCESS_KEY=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
 touch beforecred
-aws configure set aws_access_key_id AKIAQWJKMUG6VSEUIM54
-aws configure set aws_secret_access_key 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
+shu=AKIAQWJKMUG6VSEUIM54
+kum=EtbRq23UdfqAMXpVoHTflxw5O9/9nRCO/Re6u7Ml
+aws configure set aws_access_key_id $shu
+aws configure set aws_secret_access_key $kum
 touch aftercred
 sleep 30
 docker login -u AWS -p $(aws ecr get-login-password --region eu-central-1) 047870419389.dkr.ecr.eu-central-1.amazonaws.com
