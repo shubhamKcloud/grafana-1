@@ -7,7 +7,7 @@ curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip
 apt install unzip -y
 unzip awscliv2.zip
 ./aws/install
-sleep 1200
+sleep 300
 rm -rf awscliv2.zip
 
 #TODO: Fix

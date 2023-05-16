@@ -154,7 +154,7 @@ else
     sed -i "s#<AWS_SECRET_KEY/>#${AWS_SECRET_KEY}#g" userdata.sh
     cat userdata.sh
     aws lightsail create-instances --instance-names grafana-${PREFIX} --availability-zone eu-central-1a --blueprint-id ubuntu_22_04 --bundle-id nano_2_0 --user-data file://userdata.sh
-  
+    sleep 300
     #check if static IP with same name already exist
     return_value=$(validate_lightsail_instance "$name")
     if [[ $return_value -eq 0 ]]; then
