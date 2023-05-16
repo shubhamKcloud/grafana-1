@@ -160,7 +160,7 @@ else
     aws lightsail create-instances --instance-names grafana-${PREFIX} --availability-zone eu-central-1a --blueprint-id ubuntu_22_04 --bundle-id nano_2_0 --user-data file://lightsail.sh
   
     #check if static IP with same name already exist
-    return_value=$(check_lightsail_static_ip "$name")
+    return_value=$(validate_lightsail_instance "$name")
     #echo " value : $return_value"
     if [[ $return_value -eq 0 ]]; then
       echo "static IP with name $static_ip_name already exist"
