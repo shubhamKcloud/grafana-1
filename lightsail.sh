@@ -10,8 +10,6 @@ unzip awscliv2.zip
 sleep 300
 rm -rf awscliv2.zip
 
-#TODO: Fix
-##export will not work
 AWS_ACCESS_KEY_ID="AKIAQWJKMUG6VSEUIM54"
 AWS_SECRET_ACCESS_KEY="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"
 AWS_REGION="eu-central-1"
