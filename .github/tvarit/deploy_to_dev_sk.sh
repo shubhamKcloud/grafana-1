@@ -160,7 +160,7 @@ else
     if [[ $return_value -eq 0 ]]; then
       echo "static IP with name $static_ip_name already exist"
     else
-      echo "IP name does not exist. Creating it for your instance!!!!!"
+      echo "Static IP name does not exist. Creating it for your instance!!!!!"
       aws lightsail allocate-static-ip --static-ip-name grafana-ip-${PREFIX}
       echo "waiting for server to up and running!!!!!!!!!!!"
       sleep 180
