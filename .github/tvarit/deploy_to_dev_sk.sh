@@ -33,7 +33,7 @@ ccheck_lightsail_static_ip() {
 delete_lightsail_instance() {
   instance_name="$1"
 
-  aws lightsail delete-instance --instance-name $INSTANCE_NAME
+  aws lightsail delete-instance --instance-name $instance_name
 
 }
 
