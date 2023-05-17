@@ -16,8 +16,8 @@ AWS_ACCESS_KEY_ID="AKIAQWJKMUG6VSEUIM54"
 AWS_SECRET_ACCESS_KEY="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"
 AWS_REGION="eu-central-1"
 
-# aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID
-# aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY
+aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID
+aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY
 
 docker login -u AWS -p $(aws ecr get-login-password --region eu-central-1) 047870419389.dkr.ecr.eu-central-1.amazonaws.com
 docker pull 047870419389.dkr.ecr.eu-central-1.amazonaws.com/lightsail:latest
