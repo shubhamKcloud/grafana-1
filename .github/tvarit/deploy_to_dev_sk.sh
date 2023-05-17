@@ -19,7 +19,7 @@ validate_lightsail_instance() {
 
 }
 
-ccheck_lightsail_static_ip() {
+check_lightsail_static_ip() {
     static_ip_name="$1"
 
     # Get the static IP information
