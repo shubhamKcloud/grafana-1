@@ -40,7 +40,7 @@ delete_lightsail_instance() {
 delete_static_ip() {
   static_ip_name="$1"
 
-  aws lightsail release-static-ip --static-ip-name $STATIC_IP_NAME
+  aws lightsail release-static-ip --static-ip-name $static_ip_name
 }
 
 aws lightsail get-certificates --certificate-name ${PREFIX}-tvarit-com > /dev/null
