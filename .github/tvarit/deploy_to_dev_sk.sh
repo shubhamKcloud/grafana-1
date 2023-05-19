@@ -188,7 +188,7 @@ sed -i "s#<AWS_ACCESS_KEY/>#${AWS_ACCESS_KEY}#g" userdata.sh
 sed -i "s#<AWS_SECRET_KEY/>#${AWS_SECRET_KEY}#g" userdata.sh
 cat userdata.sh
 aws lightsail create-instances --instance-names grafana-${PREFIX} --availability-zone eu-central-1a --blueprint-id ubuntu_22_04 --bundle-id nano_2_0 --user-data file://userdata.sh
-sleep 300
+#sleep 300
 
 #check if static IP with same name already exist
 # return_value=$(check_lightsail_static_ip "$static_ip_name")
@@ -205,12 +205,13 @@ echo "waiting for server to up and running!!!!!!!!!!!"
 
 #check if load balancer exist
 return_value=$(check_load_balancer_existence "grafana-lb")
-if [[ $return_value -eq 0 ]]; then
-  echo "load balancer exist"
-else  
-  echo "Testing Testing"
-  create_load_balancer "grafana-lb" 80
-fi
+echo $return_value
+# if [[ $return_value -eq 0 ]]; then
+#   echo "load balancer exist"
+# else  
+echo "Testing Testing"
+create_load_balancer "grafana-lb" 80
+# fi
 
 add_instance_to_load_balancer grafana-${PREFIX} grafana-lb
 aws lightsail open-instance-public-ports --port-info fromPort=3000,toPort=3000,protocol=TCP --instance-name grafana-${PREFIX}
