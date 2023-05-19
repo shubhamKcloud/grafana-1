@@ -48,9 +48,7 @@ function add_instance_to_load_balancer() {
     local instance_name="$1"
     local load_balancer_name="$2"
 
-    aws lightsail attach-instances-to-load-balancer \    
-      --load-balancer-name grafana-lb \          
-      --instance-names grafana-test
+    aws lightsail attach-instances-to-load-balancer --load-balancer-name "$2" --instance-names "$1"
 
 }
 
