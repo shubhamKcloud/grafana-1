@@ -54,7 +54,7 @@ function add_instance_to_load_balancer() {
 
 function check_load_balancer_existence() {
     local load_balancer_name="$1"
-    echo "testing"
+    
     aws lightsail get-load-balancer --load-balancer-name "$load_balancer_name" >/dev/null 2>&1
 
     local exit_code=$?
@@ -65,13 +65,13 @@ function check_load_balancer_existence() {
 function create_load_balancer() {
     local load_balancer_name="$1"
     local instance_port="$2"
-    echo "11111111111111111"
+    
     #aws lightsail create-load-balancer-tls-certificate --load-balancer-name "$load_balancer_name" >/dev/null 2>&1
-    echo "22222222222222222"
+    
     aws lightsail create-load-balancer \
         --load-balancer-name "$load_balancer_name" \
         --instance-port "$instance_port"
-    echo "33333333333333333"
+    
 }
 
 aws lightsail get-certificates --certificate-name ${PREFIX}-tvarit-com > /dev/null
@@ -186,9 +186,9 @@ echo "Creating lightsail instance!!!!!!"
 cp lightsail.sh userdata.sh
 sed -i "s#<AWS_ACCESS_KEY/>#${AWS_ACCESS_KEY}#g" userdata.sh
 sed -i "s#<AWS_SECRET_KEY/>#${AWS_SECRET_KEY}#g" userdata.sh
-cat userdata.sh
+
 aws lightsail create-instances --instance-names grafana-${PREFIX} --availability-zone eu-central-1a --blueprint-id ubuntu_22_04 --bundle-id nano_2_0 --user-data file://userdata.sh
-#sleep 300
+sleep 300
 
 #check if static IP with same name already exist
 # return_value=$(check_lightsail_static_ip "$static_ip_name")
@@ -199,22 +199,19 @@ aws lightsail create-instances --instance-names grafana-${PREFIX} --availability
 
 #echo "Creating statis IP for your instance!!!!!"
 #aws lightsail allocate-static-ip --static-ip-name grafana-ip-${PREFIX}
-echo "waiting for server to up and running!!!!!!!!!!!"
-#sleep 180
 #aws lightsail attach-static-ip  --static-ip-name grafana-ip-${PREFIX} --instance-name grafana-${PREFIX}
 
 #check if load balancer exist
 return_value=$(check_load_balancer_existence "grafana-lb")
 echo $return_value
-# if [[ $return_value -eq 0 ]]; then
-#   echo "load balancer exist"
-# else  
-echo "Testing Testing"
-create_load_balancer "grafana-lb" 80
-echo "sssssssssssssss"
-# fi
+  if [[ $return_value -eq 0 ]]; then
+    echo "load balancer exist"
+  else
+    create_load_balancer "grafana-lb" 80
+  fi
 
-sleep 120
+echo "waiting for server to up and running!!!!!!!!!!!"
+sleep 180
 add_instance_to_load_balancer grafana-${PREFIX} grafana-lb
-echo "kkkkkkkkkkkkkkkkkkkkk"
+
 aws lightsail open-instance-public-ports --port-info fromPort=3000,toPort=3000,protocol=TCP --instance-name grafana-${PREFIX}
