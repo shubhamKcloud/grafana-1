@@ -48,9 +48,10 @@ function add_instance_to_load_balancer() {
     local instance_name="$1"
     local load_balancer_name="$2"
 
-    aws lightsail register-instances-with-load-balancer \
-        --load-balancer-name "$load_balancer_name" \
-        --instances "$instance_name"
+    aws lightsail attach-instances-to-load-balancer \    
+      --load-balancer-name grafana-lb \          
+      --instance-names grafana-test
+
 }
 
 function check_load_balancer_existence() {
@@ -216,4 +217,5 @@ echo "sssssssssssssss"
 # fi
 
 add_instance_to_load_balancer grafana-${PREFIX} grafana-lb
+echo "kkkkkkkkkkkkkkkkkkkkk"
 aws lightsail open-instance-public-ports --port-info fromPort=3000,toPort=3000,protocol=TCP --instance-name grafana-${PREFIX}
