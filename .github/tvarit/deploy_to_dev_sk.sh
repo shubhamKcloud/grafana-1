@@ -19,29 +19,38 @@ validate_lightsail_instance() {
 
 }
 
-check_lightsail_static_ip() {
-    static_ip_name="$1"
+# check_lightsail_static_ip() {
+#     static_ip_name="$1"
 
-    # Get the static IP information
-    static_ip_info=$(aws lightsail get-static-ip --static-ip-name "$static_ip_name" 2>/dev/null)
+#     # Get the static IP information
+#     static_ip_info=$(aws lightsail get-static-ip --static-ip-name "$static_ip_name" 2>/dev/null)
 
-    local exit_code=$?
-    echo $exit_code
+#     local exit_code=$?
+#     echo $exit_code
 
+# }
+
+# delete_lightsail_instance() {
+#   instance_name="$1"
+
+#   aws lightsail delete-instance --instance-name $instance_name
+
+# }
+
+function add_instance_to_load_balancer() {
+    local instance_name="$1"
+    local load_balancer_name="$2"
+
+    aws lightsail register-instances-with-load-balancer \
+        --load-balancer-name "$load_balancer_name" \
+        --instances "$instance_name"
 }
 
-delete_lightsail_instance() {
-  instance_name="$1"
+# delete_static_ip() {
+#   static_ip_name="$1"
 
-  aws lightsail delete-instance --instance-name $instance_name
-
-}
-
-delete_static_ip() {
-  static_ip_name="$1"
-
-  aws lightsail release-static-ip --static-ip-name $static_ip_name
-}
+#   aws lightsail release-static-ip --static-ip-name $static_ip_name
+# }
 
 aws lightsail get-certificates --certificate-name ${PREFIX}-tvarit-com > /dev/null
 
@@ -169,15 +178,16 @@ aws lightsail create-instances --instance-names grafana-${PREFIX} --availability
 sleep 300
 
 #check if static IP with same name already exist
-return_value=$(check_lightsail_static_ip "$static_ip_name")
-if [[ $return_value -eq 0 ]]; then
-  echo "static IP with name $static_ip_name already exist"
-  delete_static_ip $static_ip_name
-fi
+# return_value=$(check_lightsail_static_ip "$static_ip_name")
+# if [[ $return_value -eq 0 ]]; then
+#   echo "static IP with name $static_ip_name already exist"
+#   delete_static_ip $static_ip_name
+# fi
 
-echo "Creating statis IP for your instance!!!!!"
-aws lightsail allocate-static-ip --static-ip-name grafana-ip-${PREFIX}
+#echo "Creating statis IP for your instance!!!!!"
+#aws lightsail allocate-static-ip --static-ip-name grafana-ip-${PREFIX}
 echo "waiting for server to up and running!!!!!!!!!!!"
 sleep 180
-aws lightsail attach-static-ip  --static-ip-name grafana-ip-${PREFIX} --instance-name grafana-${PREFIX}
+#aws lightsail attach-static-ip  --static-ip-name grafana-ip-${PREFIX} --instance-name grafana-${PREFIX}
+add_instance_to_load_balancer grafana-${PREFIX} grafana-lb
 aws lightsail open-instance-public-ports --port-info fromPort=3000,toPort=3000,protocol=TCP --instance-name grafana-${PREFIX}
