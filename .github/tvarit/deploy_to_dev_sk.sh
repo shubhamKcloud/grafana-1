@@ -214,6 +214,7 @@ create_load_balancer "grafana-lb" 80
 echo "sssssssssssssss"
 # fi
 
+sleep 120
 add_instance_to_load_balancer grafana-${PREFIX} grafana-lb
 echo "kkkkkkkkkkkkkkkkkkkkk"
 aws lightsail open-instance-public-ports --port-info fromPort=3000,toPort=3000,protocol=TCP --instance-name grafana-${PREFIX}
