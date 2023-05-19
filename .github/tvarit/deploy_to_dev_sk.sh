@@ -19,6 +19,14 @@ validate_lightsail_instance() {
 
 }
 
+delete_lightsail_instance() {
+  instance_name="$1"
+
+  aws lightsail delete-instance --instance-name $instance_name
+
+}
+
+
 # check_lightsail_static_ip() {
 #     static_ip_name="$1"
 
@@ -30,11 +38,10 @@ validate_lightsail_instance() {
 
 # }
 
-# delete_lightsail_instance() {
-#   instance_name="$1"
+# delete_static_ip() {
+#   static_ip_name="$1"
 
-#   aws lightsail delete-instance --instance-name $instance_name
-
+#   aws lightsail release-static-ip --static-ip-name $static_ip_name
 # }
 
 function add_instance_to_load_balancer() {
@@ -46,11 +53,18 @@ function add_instance_to_load_balancer() {
         --instances "$instance_name"
 }
 
-# delete_static_ip() {
-#   static_ip_name="$1"
+function check_load_balancer_existence() {
+    local load_balancer_name="$1"
 
-#   aws lightsail release-static-ip --static-ip-name $static_ip_name
-# }
+    aws lightsail get-load-balancer --load-balancer-name "$load_balancer_name" >/dev/null 2>&1
+
+    if [ $? -eq 0 ]; then
+        echo "Load balancer $load_balancer_name exists."
+    else
+        echo "Load balancer $load_balancer_name does not exist."
+    fi
+}
+
 
 aws lightsail get-certificates --certificate-name ${PREFIX}-tvarit-com > /dev/null
 
