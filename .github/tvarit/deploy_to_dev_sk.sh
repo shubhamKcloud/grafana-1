@@ -66,14 +66,12 @@ function check_load_balancer_existence() {
 function create_load_balancer() {
     local load_balancer_name="$1"
     local instance_port="$2"
-    local lb_port="$3"
-    local protocol="$4"
+
+    aws lightsail create-load-balancer-tls-certificate --load-balancer-name "$load_balancer_name" >/dev/null 2>&1
 
     aws lightsail create-load-balancer \
         --load-balancer-name "$load_balancer_name" \
-        --instance-port "$instance_port" \
-        --load-balancer-port "$lb_port" \
-        --protocol "$protocol"
+        --instance-port "$instance_port"
 }
 
 aws lightsail get-certificates --certificate-name ${PREFIX}-tvarit-com > /dev/null
@@ -211,7 +209,7 @@ if [[ $return_value -eq 0 ]]; then
   echo "load balancer exist"
 else  
   echo "Testing Testing"
-  create_load_balancer "grafana-lb" 80 80 HTTP
+  create_load_balancer "grafana-lb" 80
 fi
 
 add_instance_to_load_balancer grafana-${PREFIX} grafana-lb
