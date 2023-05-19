@@ -67,7 +67,7 @@ function create_load_balancer() {
     local load_balancer_name="$1"
     local instance_port="$2"
     echo "11111111111111111"
-    aws lightsail create-load-balancer-tls-certificate --load-balancer-name "$load_balancer_name" >/dev/null 2>&1
+    #aws lightsail create-load-balancer-tls-certificate --load-balancer-name "$load_balancer_name" >/dev/null 2>&1
     echo "22222222222222222"
     aws lightsail create-load-balancer \
         --load-balancer-name "$load_balancer_name" \
