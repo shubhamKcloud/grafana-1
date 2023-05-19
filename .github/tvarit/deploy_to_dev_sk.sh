@@ -55,16 +55,26 @@ function add_instance_to_load_balancer() {
 
 function check_load_balancer_existence() {
     local load_balancer_name="$1"
-
+    echo "testing"
     aws lightsail get-load-balancer --load-balancer-name "$load_balancer_name" >/dev/null 2>&1
 
-    if [ $? -eq 0 ]; then
-        echo "Load balancer $load_balancer_name exists."
-    else
-        echo "Load balancer $load_balancer_name does not exist."
-    fi
+    local exit_code=$?
+    echo $exit_code
+
 }
 
+function create_load_balancer() {
+    local load_balancer_name="$1"
+    local instance_port="$2"
+    local lb_port="$3"
+    local protocol="$4"
+
+    aws lightsail create-load-balancer \
+        --load-balancer-name "$load_balancer_name" \
+        --instance-port "$instance_port" \
+        --load-balancer-port "$lb_port" \
+        --protocol "$protocol"
+}
 
 aws lightsail get-certificates --certificate-name ${PREFIX}-tvarit-com > /dev/null
 
@@ -124,14 +134,6 @@ DB_PASSWORD=$(aws lightsail get-relational-database-master-user-password --relat
 AWS_ACCESS_KEY=$(aws secretsmanager get-secret-value --secret-id /credentials/grafana-user/access-key --output text --query SecretString)
 AWS_SECRET_KEY=$(aws secretsmanager get-secret-value --secret-id /credentials/grafana-user/secret-key --output text --query SecretString)
 
-# echo "Create Lightsail container service if not exists..."
-# (aws lightsail create-container-service \
-#   --service-name  "${PREFIX}-next-grafana" \
-#   --power nano \
-#   --scale 1 \
-#   --region "${AWS_DEFAULT_REGION}" \
-#   --public-domain-names ${PREFIX}-tvarit-com=next-${PREFIX}.tvarit.com && sleep 10) || :
-
 echo "Building docker image..."
 # docker build --tag grafana/grafana:next-${PREFIX} .
 
@@ -171,7 +173,6 @@ aws ecr get-login-password --region eu-central-1 | docker login --username AWS -
 docker tag grafana/grafana:next-${PREFIX} 047870419389.dkr.ecr.eu-central-1.amazonaws.com/lightsail:latest
 docker push 047870419389.dkr.ecr.eu-central-1.amazonaws.com/lightsail:latest
 
-
 instance_name=grafana-${PREFIX}
 static_ip_name=grafana-ip-${PREFIX}
 
@@ -203,5 +204,13 @@ sleep 300
 echo "waiting for server to up and running!!!!!!!!!!!"
 sleep 180
 #aws lightsail attach-static-ip  --static-ip-name grafana-ip-${PREFIX} --instance-name grafana-${PREFIX}
+
+#check if load balancer exist
+return_value=$(check_load_balancer_existence "grafana-lb")
+if [[ $return_value -eq 0 ]]; then
+  echo "load balancer exist"
+  create_load_balancer "grafana-lb" 80 80 HTTP
+fi
+
 add_instance_to_load_balancer grafana-${PREFIX} grafana-lb
 aws lightsail open-instance-public-ports --port-info fromPort=3000,toPort=3000,protocol=TCP --instance-name grafana-${PREFIX}
