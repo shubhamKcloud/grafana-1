@@ -148,7 +148,7 @@ aws ecr get-login-password --region eu-central-1 | docker login --username AWS -
 docker tag grafana/grafana:next-${PREFIX} 047870419389.dkr.ecr.eu-central-1.amazonaws.com/lightsail:latest
 docker push 047870419389.dkr.ecr.eu-central-1.amazonaws.com/lightsail:latest
 
-# Check if instance with same name already exist
+
 instance_name=grafana-${PREFIX}
 static_ip_name=grafana-ip-${PREFIX}
 
