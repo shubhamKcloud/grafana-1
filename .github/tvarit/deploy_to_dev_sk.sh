@@ -202,13 +202,15 @@ sleep 300
 #echo "Creating statis IP for your instance!!!!!"
 #aws lightsail allocate-static-ip --static-ip-name grafana-ip-${PREFIX}
 echo "waiting for server to up and running!!!!!!!!!!!"
-sleep 180
+#sleep 180
 #aws lightsail attach-static-ip  --static-ip-name grafana-ip-${PREFIX} --instance-name grafana-${PREFIX}
 
 #check if load balancer exist
 return_value=$(check_load_balancer_existence "grafana-lb")
 if [[ $return_value -eq 0 ]]; then
   echo "load balancer exist"
+else  
+  echo "Testing Testing"
   create_load_balancer "grafana-lb" 80 80 HTTP
 fi
 
