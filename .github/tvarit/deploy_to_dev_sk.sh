@@ -175,7 +175,7 @@ if [[ $return_value -eq 0 ]]; then
   delete_static_ip $static_ip_name
 fi
 
-echo "Static IP name does not exist. Creating it for your instance!!!!!"
+echo "Creating statis IP for your instance!!!!!"
 aws lightsail allocate-static-ip --static-ip-name grafana-ip-${PREFIX}
 echo "waiting for server to up and running!!!!!!!!!!!"
 sleep 180

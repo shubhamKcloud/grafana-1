@@ -20,4 +20,4 @@ aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY
 docker login -u AWS -p $(aws ecr get-login-password --region eu-central-1) 047870419389.dkr.ecr.eu-central-1.amazonaws.com
 docker pull 047870419389.dkr.ecr.eu-central-1.amazonaws.com/lightsail:latest
 docker images >> test.txt
-docker run -d -p 3000:3000 047870419389.dkr.ecr.eu-central-1.amazonaws.com/lightsail:latest
+docker run -d -p 80:3000 047870419389.dkr.ecr.eu-central-1.amazonaws.com/lightsail:latest
